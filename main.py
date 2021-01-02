@@ -1,7 +1,7 @@
 from flask import Flask, request
 from string import Template
 from flask import render_template
-from nic_parser.parser import Parser
+from nic_parser.parser import Parser,Gender
 
 app = Flask(__name__)
 
@@ -13,6 +13,10 @@ class User:
         self.name = name
         self.dob = Parser(f"{nic}").birth_date
         self.gender = Parser(f"{nic}").gender
+        if self.gender == Gender.MALE:
+            self.gender = "male"
+        else:
+            self.gender = "female"
 
 
 user_list = []
