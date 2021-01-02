@@ -5,12 +5,20 @@ from flask import render_template
 app = Flask(__name__)
 
 
-@app.route("/insert_user")
+name_list = ["A", "B"]
+
+
+@app.route("/insert_user", methods=["get", "post"])
 def insert_user_data():
-    name =""
-    if "user_name" in request.args:
-        name = request.args["user_name"]
-    return render_template("user_data.html",name=name)
+    print("insert_user_data_method")
+    name = ""
+    print(request.method)
+    if request.method == "POST":
+        print("inside the post filter")
+        name = request.form.get("user_name")
+        name_list.append(name)
+
+    return render_template("user_data.html", name_list=name_list)
 
 
 @app.route("/")
