@@ -1,8 +1,16 @@
-from flask import Flask
+from flask import Flask, request
 from string import Template
 from flask import render_template
 
 app = Flask(__name__)
+
+
+@app.route("/insert_user")
+def insert_user_data():
+    name =""
+    if "user_name" in request.args:
+        name = request.args["user_name"]
+    return render_template("user_data.html",name=name)
 
 
 @app.route("/")
