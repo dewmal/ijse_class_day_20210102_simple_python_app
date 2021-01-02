@@ -1,14 +1,26 @@
 <form method="post">
-    User Name : <input name="user_name" type="text">
+    User Name : <input name="user_name" type="text"><br/>
+    NIC : <input name="nic" type="text"><br/>
+
     <button type="submit">Save</button>
 </form>
 
-<ul>
-    {% for user in name_list %}
-        <li>{{user.name}}</li>
-    {% endfor %}
-</ul>
+<h4>User List</h4>
+<table border="1">
+    <tr>
+        <th>Name</th>
+        <th>Nic</th>
+        <th>Dob</th>
+        <th>Gender</th>
+    </tr>
 
-<table>
+    {% for user in user_list %}
+    <tr>
+        <th><span style="margin: 8px">{{user.name}}</span></th>
+        <th><span style="margin: 8px">{{user.nic}}</span></th>
+        <th><span style="margin: 8px">{{user.dob}}</span></th>
+        <th><span style="margin: 8px">{{user.gender}}</span></th>
+    </tr>
+    {% endfor %}
 
 </table>

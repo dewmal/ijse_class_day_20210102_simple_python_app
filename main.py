@@ -1,11 +1,21 @@
 from flask import Flask, request
 from string import Template
 from flask import render_template
+from nic_parser.parser import Parser
 
 app = Flask(__name__)
 
 
-name_list = ["A", "B"]
+class User:
+
+    def __init__(self, name, nic):
+        self.nic = nic
+        self.name = name
+        self.dob = Parser(f"{nic}").birth_date
+        self.gender = Parser(f"{nic}").gender
+
+
+user_list = []
 
 
 @app.route("/insert_user", methods=["get", "post"])
@@ -16,9 +26,10 @@ def insert_user_data():
     if request.method == "POST":
         print("inside the post filter")
         name = request.form.get("user_name")
-        name_list.append(name)
+        nic = request.form.get("nic")
+        user_list.append(User(name=name, nic=nic))
 
-    return render_template("user_data.html", name_list=name_list)
+    return render_template("user_data.html", user_list=user_list)
 
 
 @app.route("/")
