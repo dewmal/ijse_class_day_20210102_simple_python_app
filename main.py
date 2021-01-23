@@ -1,53 +1,48 @@
 from flask import Flask, request
-from string import Template
 from flask import render_template
-from nic_parser.parser import Parser,Gender
+from werkzeug.utils import secure_filename
+from ml_model import train, test, predict
+
+UPLOAD_FOLDER = 'upload'
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
-class User:
-
-    def __init__(self, name, nic):
-        self.nic = nic
-        self.name = name
-        self.dob = Parser(f"{nic}").birth_date
-        self.gender = Parser(f"{nic}").gender
-        if self.gender == Gender.MALE:
-            self.gender = "male"
-        else:
-            self.gender = "female"
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-user_list = []
+@app.route("/train")
+def train_page():
+    train()
 
 
-@app.route("/insert_user", methods=["get", "post"])
-def insert_user_data():
-    print("insert_user_data_method")
-    name = ""
-    print(request.method)
+@app.route("/test")
+def test_page():
+    test()
+
+
+@app.route("/predict", methods=["GET", "POST"])
+def predict_page():
+    label = "No input"
+
     if request.method == "POST":
-        print("inside the post filter")
-        name = request.form.get("user_name")
-        nic = request.form.get("nic")
-        user_list.append(User(name=name, nic=nic))
+        if "number" in request.files:
+            file = request.files["number"]
+            file_name = secure_filename(file.filename)
+            file.save(file_name)
+            predicted_label = predict(image=file_name)
+            label = predicted_label
 
-    return render_template("user_data.html", user_list=user_list)
+    return render_template("predict.html", label=label)
 
 
 @app.route("/")
 def index():
     return render_template("index.html", name="AAA")
-
-
-@app.route("/_index_file_from_file_read")
-def using_file_read():
-    index_file = open("templates/index.html", "r")
-    index_string = index_file.readlines()
-    temp_string = Template(''.join(index_string))
-    index_string = temp_string.substitute(name="ABCCC")
-    return f"{index_string}"
 
 
 if __name__ == '__main__':

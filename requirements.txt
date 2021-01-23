@@ -1,2 +1,7 @@
 Flask
 nic-parser
+tensorflow
+tensorflow-hub
+matplotlib
+tensorflow_datasets
+Pillow
